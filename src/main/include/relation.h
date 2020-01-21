@@ -1,4 +1,4 @@
-#ifndef relation_H
+#ifndef relation_H_
 #define relation_H_
     #include <sys/stat.h>  // stat
     #include <sys/mman.h>  // mmap

@@ -17,10 +17,30 @@
         job_scheduler *js;
     }query_job;
 
+    typedef query_job queueType;
+
     void query_job_init(query_job *qj, query_t *query, rel_t **relations, void *js);
 
     int run(query_job *qj);
 
+    typedef struct {
+        int front;
+        int back;
+        int size;
+        queueType** buffer;
+    } queue_t;
+
+    void queue_create(queue_t *q, int size);
+
+    void queue_destroy(queue_t *q);
+
+    int queue_empty(queue_t *q);
+
+    int queue_full(queue_t *q);
+
+    int queue_push(queue_t *q, queueType *element);
+
+    queueType *queue_pop(queue_t *q);
 
     typedef struct job_scheduler {
         char bar;
@@ -31,7 +51,7 @@
         pthread_cond_t cond_nonempty;
         pthread_cond_t cond_empty;
         pthread_barrier_t pbar;
-        queue q;
+        queue_t q;
     } job_scheduler;
 
     void job_scheduler_threadWork(job_scheduler *js, void *arg);

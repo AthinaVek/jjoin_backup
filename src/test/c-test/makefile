@@ -6,7 +6,7 @@ MX_HDRS = $(INCLUDE)/tuple.h  $(INCLUDE)/matrix.h
 TBL_HDRS = $(INCLUDE)/table.h $(INCLUDE)/header.h $(MX_HDRS)
 HDRS = $(INCLUDE)/define.h $(INCLUDE)/list.h $(INCLUDE)/utils.h $(TBL_HDRS)
 COL_HDRS = $(INCLUDE)/harness.h $(HDRS)
-HARNESS_HDRS = $(INCLUDE)/job_scheduler.h $(INCLUDE)/queue.h $(INCLUDE)/vector.h $(INCLUDE)/query.h $(COL_HDRS)
+HARNESS_HDRS = $(INCLUDE)/queue.h $(INCLUDE)/vector.h $(INCLUDE)/query.h $(COL_HDRS) $(INCLUDE)/job_scheduler.h
 
 # out files
 HRNS_OUT = rel_init column pred_sort harness
@@ -31,7 +31,7 @@ COLUMN = $(RELATION) $(JOIN) $(BASE)/mx_radix.o $(BASE)/matrix_utils.o $(BASE)/m
 TEST = $(BASE)/table_quick_sort.o $(BASE)/table_sort.o
 QUERY = $(BASE)/query.o $(BASE)/query_ops.o
 MX_RADIX = $(BASE)/smj.o $(BASE)/mx_radix.o $(MATRIX)
-HARNESS = $(BASE)/vector.o $(TEST) $(QUERY) $(QUEUE) $(THREADS) $(BASE)/harness.o $(MX_RADIX) $(RELATION) $(LIST) $(BASE)/join.o
+HARNESS = $(BASE)/vector.o $(TEST) $(QUERY) $(QUEUE) $(BASE)/harness.o $(MX_RADIX) $(RELATION) $(LIST) $(BASE)/join.o $(THREADS)
 ####
 
 all: $(OUT)

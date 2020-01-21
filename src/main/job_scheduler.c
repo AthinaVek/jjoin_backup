@@ -3,6 +3,48 @@
 
 #include "job_scheduler.h"
 
+void queue_create(queue_t *q, int size) {
+	q->front = 0;
+	q->back = 0;
+	q->size = size;
+	q->buffer = malloc(size * sizeof(queueType *));
+}
+
+void queue_destroy(queue_t *q) {
+	printf("DESTROY\n");
+	free(q->buffer);
+}
+
+int queue_empty(queue_t *q) {
+	return ( q->front == q->back );
+}
+
+int queue_full(queue_t *q) {
+	int neo_back = (q->back+1) % q->size;
+	if (neo_back == q->front )
+		return 1;
+	else
+		return 0;
+}
+
+int queue_push(queue_t *q, queueType *element) {
+	if ( queue_full(q) == 0 ){
+		q->buffer[q->back] = element;
+		q->back = ( q->back + 1 ) % q->size;
+		return 1;
+	}
+	return 0;
+}
+
+queueType *queue_pop(queue_t *q) {
+	if ( queue_empty(q) == 0 ){
+		queueType *element = q->buffer[q->front];
+		q->front = ( q->front + 1 ) % q->size;
+		return element;
+	}
+	return NULL;
+}
+
 int query_job_run(query_job *qj) {
     query_exec(qj->query/*, qk->js, qj->relations*/);
     return 0;
@@ -17,7 +59,7 @@ void query_job_init(query_job *qj, query_t *query, rel_t **relations, void *js) 
 /* Start routine */
 void *jobThreadWork(void *arg) {
     job_scheduler *js = (job_scheduler *) arg;
-    job_scheduler_threadWork(&js, NULL);
+    job_scheduler_threadWork(js, NULL);
     return NULL;
 }
 
@@ -42,8 +84,7 @@ void job_scheduler_threadWork(job_scheduler *js, void *arg) {
         if (queue_empty(&(js->q))) {
             job = NULL;
         } else {
-            job = js->q.buffer[js->q.front];
-            (js->q).pop();
+            job = queue_pop(&(js->q));
         }
         if (queue_empty(&(js->q))) {
             // if queue has emptied, signal barrier
@@ -76,8 +117,7 @@ void job_scheduler_threadWork(job_scheduler *js, void *arg) {
 char job_scheduler_init(job_scheduler *js, size_t num_of_threads) {
     js->bar = 0;
     js->done = 0;
-    js->q = malloc(sizeof(queue));
-    queue_create(js->q, 100);
+    queue_create(&(js->q), 100);
 
     pthread_mutex_init(&(js->queueLock), NULL);
     pthread_cond_init(&(js->cond_nonempty), NULL);
